@@ -45,6 +45,17 @@ jobs:
             echo "This is an integration step"
             exit 1
           when: always                    # Even if the job fails, continue to the next stages
+          
+  secret_scanning:
+    machine: true
+    steps:
+      - checkout
+
+      - run: docker run --rm -v $(pwd):/src hysnsec/trufflehog file:///src --json > trufflehog-output.json
+
+      - store_artifacts:
+          path: trufflehog-output.json
+          destination: trufflehog-artifact
 
   prod:
     docker:
